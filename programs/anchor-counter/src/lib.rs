@@ -5,26 +5,27 @@ declare_id!("9R5tjTKgM49xKCD6B6nJrYDidbqo3SBwaorNmMRZ7j4y");
 #[program]
 pub mod anchor_counter {
     use super::*;
+    pub const E: f64 = 2.71828182845904523536028747135266250_f64;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
         let counter = &mut ctx.accounts.counter;
-        counter.count = 0;
+        counter.count = 0.0;
         msg!("Counter Account Created");
         msg!("Current Count: { }", counter.count);
         Ok(())
     }
-    pub fn increment(ctx: Context<Update>) -> Result<()> {
+    pub fn formulation1(ctx: Context<Update>, n: f64, m: f64, x: f64) -> Result<()> {
         let counter = &mut ctx.accounts.counter;
-        msg!("Previous counter: {}", counter.count);
-        counter.count = counter.count.checked_add(1).unwrap();
-        msg!("Counter incremented. Current count: {}", counter.count);
+        let mut y: f64 = n * x as f64 / m + 1.0;
+        y = y.ln() * (1.0 / n);
+        counter.count = y;
         Ok(())
     }
-    pub fn decrement(ctx: Context<Update>) -> Result<()> {
+
+    pub fn formulation2(ctx: Context<Update>, n: f64, m: f64, x: f64) -> Result<()> {
         let counter = &mut ctx.accounts.counter;
-        msg!("Previous counter: {}", counter.count);
-        counter.count = counter.count.checked_sub(1).unwrap();
-        msg!("Counter decremented. Current count: {}", counter.count);
+        let y: f64 = (m / n) * (E.powf(n * x) - 1.0);
+        counter.count = y;
         Ok(())
     }
 }
@@ -32,7 +33,7 @@ pub mod anchor_counter {
 #[account]
 #[derive(InitSpace)]
 pub struct Counter {
-    pub count: u64,
+    pub count: f64,
 }
 
 #[derive(Accounts)]
