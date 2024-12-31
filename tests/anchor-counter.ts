@@ -19,7 +19,7 @@ describe("anchor-counter", () => {
       .accounts({ counter: counter.publicKey })
       .signers([counter])
       .rpc();
-
+    console.log(counter.publicKey.toBase58());
     const account = await program.account.counter.fetch(counter.publicKey);
     expect(account.count.toNumber()).to.equal(0);
   });
